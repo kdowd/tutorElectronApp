@@ -17,8 +17,8 @@
 
 ## Features
 - **Local Network Server:** Automatically starts an HTTP server on the local machine's IPv4 address.
-- **Real-Time Messaging:** Broadcasts a "hello universe" message from the Electron app to all connected LAN clients using SSE.
-- **Drag-and-Drop Folder Support:** View contents of local folders dropped onto the application.
+- **Real-Time Messaging:** Broadcasts custom text messages from the Electron app's messaging view to all connected LAN clients using SSE.
+- **Drag-and-Drop Folder Support:** View contents of local folders dropped onto the application and automatically broadcast the folder's name to all connected LAN clients.
 - **Client/Renderer Separation:** Distinct interfaces for the local administrator (Electron) and remote LAN viewers (Web Browser).
 
 ## Building and Running

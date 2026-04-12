@@ -12,10 +12,22 @@
         gap: 20px;
         margin-top: 100px;
       }
+      #messageInput {
+        width: 80%;
+        max-width: 400px;
+        padding: 10px;
+        font-size: 1.1rem;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+      }
       #sendBtn {
         font-size: 1.5rem;
         padding: 20px 40px;
         background-color: #28a745;
+        border: none;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
       }
       #sendBtn:hover {
         background-color: #218838;
@@ -26,7 +38,8 @@
     <div id="serverStatusBar">Local Network Address: Detecting...</div>
     <div class="messaging-container">
       <h1>Global Messaging</h1>
-      <p>Click the button below to send a message to all connected LAN clients.</p>
+      <p>Type your message below and click "Send Now" to broadcast to all LAN clients.</p>
+      <input type="text" id="messageInput" placeholder="Enter message here..." />
       <button id="sendBtn">Send Now</button>
       <p id="msgStatus"></p>
     </div>

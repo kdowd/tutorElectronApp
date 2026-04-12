@@ -1,4 +1,6 @@
 monday 13.04
 gemini --resume 'f848e275-b8cd-4252-85b9-57ed964d12ea'
 
-gemini --resume 02b5ef48-d8a5-45c6-91bc-dc1b181197c6
+  Session Details:
+   - Session ID: 02b5ef48-d8a5-45c6-91bc-dc1b181197c6
+   - Resume Command: gemini --resume 02b5ef48-d8a5-45c6-91bc-dc1b181197c6
