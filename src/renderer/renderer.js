@@ -2,6 +2,11 @@ const pingBtn = document.getElementById('pingBtn');
 const responseEl = document.getElementById('response');
 const dropZone = document.getElementById('dropZone');
 const fileListEl = document.getElementById('fileList');
+const serverStatusBar = document.getElementById('serverStatusBar');
+
+window.electronAPI.onServerInfo((address) => {
+  serverStatusBar.innerText = `Shareable Local URL: ${address}`;
+});
 
 pingBtn.addEventListener('click', () => {
   window.electronAPI.ping();

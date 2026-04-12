@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onRescan: (callback) => ipcRenderer.on('rescan-triggered', () => callback()),
   readDirectory: (path) => ipcRenderer.invoke('read-directory', path),
   getPathForFile: (file) => webUtils.getPathForFile(file),
+  onServerInfo: (callback) => ipcRenderer.on('server-info', (_event, value) => callback(value)),
 });
 
 
