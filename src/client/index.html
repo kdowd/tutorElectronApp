@@ -23,5 +23,30 @@
 </head>
 <body>
     <h1>Hello World</h1>
+    <div id="messageDisplay" style="margin-top: 20px; font-size: 1.5rem; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 5px; min-height: 50px;">
+        Waiting for messages...
+    </div>
+
+    <script>
+        const eventSource = new EventSource('/events');
+        const display = document.getElementById('messageDisplay');
+
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.message) {
+                display.innerText = `New Message: ${data.message}`;
+                // Briefly flash the background to get attention
+                document.body.style.backgroundColor = 'gold';
+                setTimeout(() => {
+                    document.body.style.backgroundColor = 'orange';
+                }, 1000);
+            }
+        };
+
+        eventSource.onerror = () => {
+            console.error("EventSource failed.");
+            display.innerText = "Connection lost. Reconnecting...";
+        };
+    </script>
 </body>
 </html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Messaging - My Special App</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .messaging-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        margin-top: 100px;
+      }
+      #sendBtn {
+        font-size: 1.5rem;
+        padding: 20px 40px;
+        background-color: #28a745;
+      }
+      #sendBtn:hover {
+        background-color: #218838;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="serverStatusBar">Local Network Address: Detecting...</div>
+    <div class="messaging-container">
+      <h1>Global Messaging</h1>
+      <p>Click the button below to send a message to all connected LAN clients.</p>
+      <button id="sendBtn">Send Now</button>
+      <p id="msgStatus"></p>
+    </div>
+    <script src="messaging.js"></script>
+  </body>
+</html>

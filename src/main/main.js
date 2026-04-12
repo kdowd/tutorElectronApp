@@ -6,6 +6,7 @@ const os = require('os');
 
 let mainWindow;
 let serverAddress = '';
+let sseClients = []; // Track connected SSE clients for messaging
 
 function getLocalIp() {
   const interfaces = os.networkInterfaces();
@@ -21,6 +22,21 @@ function getLocalIp() {
 
 async function startLocalServer() {
   const server = http.createServer(async (req, res) => {
+    // Handle Server-Sent Events for messaging
+    if (req.url === '/events') {
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+      });
+      res.write('\n');
+      sseClients.push(res);
+      req.on('close', () => {
+        sseClients = sseClients.filter(client => client !== res);
+      });
+      return;
+    }
+
     try {
       // Serve files from the 'client' directory for LAN users
       let urlPath = req.url === '/' ? 'index.html' : req.url;
@@ -77,6 +93,19 @@ function createWindow() {
       label: 'App',
       submenu: [
         {
+          label: 'Home',
+          click: () => {
+            mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+          }
+        },
+        {
+          label: 'Messaging',
+          click: () => {
+            mainWindow.loadFile(path.join(__dirname, '../renderer/messaging.html'));
+          }
+        },
+        { type: 'separator' },
+        {
           label: 'Connected',
           click: () => {
             dialog.showMessageBox(mainWindow, {
@@ -130,6 +159,14 @@ function createWindow() {
       console.error('Error reading directory:', error);
       return { success: false, error: error.message };
     }
+  });
+
+  // Handle messaging to clients
+  ipcMain.on('send-to-clients', (event, message) => {
+    console.log(`Broadcasting to clients: ${message}`);
+    sseClients.forEach(client => {
+      client.write(`data: ${JSON.stringify({ message })}\n\n`);
+    });
   });
 }
 

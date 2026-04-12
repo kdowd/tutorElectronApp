@@ -7,18 +7,19 @@
 - **Runtime:** Node.js
 - **Frontend:** Vanilla HTML, CSS, and JavaScript
 - **Build Tool:** `electron-builder`
-- **Modules:** `http` (local server), `os` (IP detection), `fs` (file operations)
+- **Modules:** `http` (local server & SSE), `os` (IP detection), `fs` (file operations)
 
 ## Architecture
-- **Main Process (`src/main/main.js`):** Manages the application lifecycle, creates browser windows, handles native system interactions (menus, dialogs), and hosts a local HTTP server for LAN clients.
-- **Preload Script (`src/main/preload.js`):** Securely exposes Electron APIs, including `ipcRenderer`, `webUtils.getPathForFile`, and server status listeners, to the renderer process.
-- **Renderer Process (`src/renderer/`):** Contains the primary application UI and frontend logic, including drag-and-drop handling and server status display.
-- **Client Interface (`src/client/`):** A simplified web interface served to other devices on the local network (LAN) via the internal HTTP server.
+- **Main Process (`src/main/main.js`):** Manages the application lifecycle, handles native menus, and hosts a local HTTP server. It implements a **Server-Sent Events (SSE)** endpoint (`/events`) to broadcast real-time messages to LAN clients.
+- **Preload Script (`src/main/preload.js`):** Securely exposes Electron APIs, including `ipcRenderer`, `webUtils.getPathForFile`, and the `sendToClients` messaging bridge.
+- **Renderer Process (`src/renderer/`):** Contains the primary application UI, including the Home view (drag-and-drop) and the Messaging view (global broadcasts).
+- **Client Interface (`src/client/`):** A simplified web interface served to LAN devices. It uses `EventSource` to listen for real-time messages from the Electron host.
 
 ## Features
-- **Local Network Server:** Automatically starts an HTTP server on the local machine's IPv4 address, allowing other devices on the same network to connect.
-- **Drag-and-Drop Folder Support:** Users can drop a folder onto the main application window to view its contents (immediate files).
-- **Client/Renderer Separation:** Provides a full-featured interface for the local user and a separate, orange-background "Hello World" page for remote LAN clients.
+- **Local Network Server:** Automatically starts an HTTP server on the local machine's IPv4 address.
+- **Real-Time Messaging:** Broadcasts a "hello universe" message from the Electron app to all connected LAN clients using SSE.
+- **Drag-and-Drop Folder Support:** View contents of local folders dropped onto the application.
+- **Client/Renderer Separation:** Distinct interfaces for the local administrator (Electron) and remote LAN viewers (Web Browser).
 
 ## Building and Running
 
@@ -40,14 +41,15 @@ npm run dist
 ## Development Conventions
 
 ### IPC Communication
-- Communication between the renderer and main process must go through the `preload.js` script using `contextBridge`.
+- **Messaging:** Use the `send-to-clients` IPC channel to trigger a broadcast from the main process to all SSE-connected clients.
 - **Directory Reading:** Use the `read-directory` IPC handle to retrieve file lists from the main process.
-- **Server Information:** Use the `onServerInfo` listener to receive the local shareable URL from the main process.
-- **File Paths:** Use `window.electronAPI.getPathForFile(file)` in the renderer to securely retrieve paths from dropped files/folders.
-- Avoid enabling `nodeIntegration` in the renderer for security reasons.
+- **Server Information:** Use the `onServerInfo` listener to receive the local shareable URL.
+- **File Paths:** Use `window.electronAPI.getPathForFile(file)` for secure path retrieval from dropped files.
 
 ### Directory Structure
-- `src/main/`: Core application logic, Electron main process, and HTTP server.
-- `src/renderer/`: Local frontend assets (HTML, CSS, JS) for the Electron window.
-- `src/client/`: Public-facing assets (HTML) for LAN clients connecting via a web browser.
-- `dist/`: Output directory for production builds (ignored by version control).
+- `src/main/`: Core logic, Electron main process, and SSE server.
+- `src/renderer/`: Frontend assets for the local Electron application.
+    - `index.html`/`renderer.js`: Home view (drag-and-drop).
+    - `messaging.html`/`messaging.js`: Messaging view.
+- `src/client/`: Public-facing assets for LAN clients.
+- `dist/`: Output directory for production builds.

@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   readDirectory: (path) => ipcRenderer.invoke('read-directory', path),
   getPathForFile: (file) => webUtils.getPathForFile(file),
   onServerInfo: (callback) => ipcRenderer.on('server-info', (_event, value) => callback(value)),
+  sendToClients: (message) => ipcRenderer.send('send-to-clients', message),
 });
 
 
