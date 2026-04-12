@@ -22,9 +22,9 @@ function getLocalIp() {
 async function startLocalServer() {
   const server = http.createServer(async (req, res) => {
     try {
-      // Basic static file server for the renderer directory
+      // Serve files from the 'client' directory for LAN users
       let urlPath = req.url === '/' ? 'index.html' : req.url;
-      let filePath = path.join(__dirname, '../renderer', urlPath);
+      let filePath = path.join(__dirname, '../client', urlPath);
       const content = await fs.readFile(filePath);
       
       const ext = path.extname(filePath);
