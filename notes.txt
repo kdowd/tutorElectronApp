@@ -1,0 +1,2 @@
+monday 13.04
+gemini --resume 'f848e275-b8cd-4252-85b9-57ed964d12ea'
