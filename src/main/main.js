@@ -7,6 +7,7 @@ const os = require('os');
 let mainWindow;
 let serverAddress = '';
 let sseClients = []; // Track connected SSE clients for messaging
+let currentFolderPath = ''; // Track the path of the last dropped folder
 
 function getLocalIp() {
   const interfaces = os.networkInterfaces();
@@ -37,10 +38,44 @@ async function startLocalServer() {
       return;
     }
 
+    // Endpoint for clients to request file content
+    if (req.url.startsWith('/read-file')) {
+      const url = new URL(req.url, `http://${req.headers.host}`);
+      const filename = url.searchParams.get('filename');
+      
+      if (!filename || !currentFolderPath) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ error: 'Missing filename or no folder active' }));
+        return;
+      }
+
+      const filePath = path.join(currentFolderPath, filename);
+      
+      try {
+        const content = await fs.readFile(filePath, 'utf-8');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, filename, content }));
+      } catch (err) {
+        console.error('Error reading file:', err);
+        res.writeHead(500);
+        res.end(JSON.stringify({ error: 'Could not read file' }));
+      }
+      return;
+    }
+
     try {
       // Serve files from the 'client' directory for LAN users
-      let urlPath = req.url === '/' ? 'index.html' : req.url;
-      let filePath = path.join(__dirname, '../client', urlPath);
+      const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+      let urlPath = parsedUrl.pathname === '/' ? 'index.html' : parsedUrl.pathname;
+      
+      // Strip leading slash if present for path.join compatibility
+      if (urlPath.startsWith('/')) {
+        urlPath = urlPath.substring(1);
+      }
+      
+      const filePath = path.join(__dirname, '../client', urlPath);
+      console.log(`Serving client file: ${filePath}`);
+      
       const content = await fs.readFile(filePath);
       
       const ext = path.extname(filePath);
@@ -168,6 +203,12 @@ function createWindow() {
     sseClients.forEach(client => {
       client.write(`data: ${JSON.stringify(payload)}\n\n`);
     });
+  });
+
+  // Track the current folder path when updated from renderer
+  ipcMain.on('set-current-folder', (event, path) => {
+    console.log(`Current folder set to: ${path}`);
+    currentFolderPath = path;
   });
 }
 

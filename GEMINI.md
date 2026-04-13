@@ -6,6 +6,7 @@
 - **Framework:** [Electron](https://www.electronjs.org/) (v34.2.0)
 - **Runtime:** Node.js
 - **Frontend:** Vanilla HTML, CSS, and JavaScript
+- **Syntax Highlighting:** [Prism.js](https://prismjs.com/) (v1.29.0)
 - **Build Tool:** `electron-builder`
 - **Modules:** `http` (local server & SSE), `os` (IP detection), `fs` (file operations)
 
@@ -18,7 +19,9 @@
 ## Features
 - **Local Network Server:** Automatically starts an HTTP server on the local machine's IPv4 address.
 - **Real-Time Messaging:** Broadcasts custom text messages from the Electron app's messaging view to all connected LAN clients using SSE.
-- **Drag-and-Drop Folder Support:** View contents of local folders dropped onto the application and automatically broadcast the folder's name to all connected LAN clients.
+- **Folder Syncing:** Automatically broadcasts folder names and file lists to LAN clients when a folder is dropped on the host.
+- **Remote File Reading:** LAN clients can click on filenames to request and display the text content of files from the host's active folder.
+- **Syntax Highlighting:** Integrated Prism.js for code highlighting in the client interface (supporting JS, CPP, HTML, CSS, MD, etc.).
 - **Client/Renderer Separation:** Distinct interfaces for the local administrator (Electron) and remote LAN viewers (Web Browser).
 
 ## Building and Running
@@ -42,9 +45,14 @@ npm run dist
 
 ### IPC Communication
 - **Messaging:** Use the `send-to-clients` IPC channel to trigger a broadcast from the main process to all SSE-connected clients.
+- **Folder Tracking:** Use the `setCurrentFolder` IPC channel to track the active folder for remote file requests.
 - **Directory Reading:** Use the `read-directory` IPC handle to retrieve file lists from the main process.
 - **Server Information:** Use the `onServerInfo` listener to receive the local shareable URL.
 - **File Paths:** Use `window.electronAPI.getPathForFile(file)` for secure path retrieval from dropped files.
+
+### HTTP Endpoints (LAN Client)
+- `/events`: SSE stream for real-time updates.
+- `/read-file?filename=name`: Returns the JSON content of a file in the active folder.
 
 ### Directory Structure
 - `src/main/`: Core logic, Electron main process, and SSE server.
@@ -52,4 +60,6 @@ npm run dist
     - `index.html`/`renderer.js`: Home view (drag-and-drop).
     - `messaging.html`/`messaging.js`: Messaging view.
 - `src/client/`: Public-facing assets for LAN clients.
+    - `index.html`: Client UI with two-column layout.
+    - `prism.js` / `prism.css`: Local syntax highlighting library.
 - `dist/`: Output directory for production builds.

@@ -46,6 +46,9 @@ dropZone.addEventListener('drop', async (e) => {
     const folderPath = window.electronAPI.getPathForFile(files[0]);
     responseEl.innerText = `Reading folder: ${folderPath}`;
     
+    // Set the folder in the main process
+    window.electronAPI.setCurrentFolder(folderPath);
+    
     const result = await window.electronAPI.readDirectory(folderPath);
     
     if (result.success) {
