@@ -162,10 +162,11 @@ function createWindow() {
   });
 
   // Handle messaging to clients
-  ipcMain.on('send-to-clients', (event, message) => {
-    console.log(`Broadcasting to clients: ${message}`);
+  ipcMain.on('send-to-clients', (event, data) => {
+    console.log(`Broadcasting to clients:`, data);
+    const payload = typeof data === 'string' ? { message: data } : data;
     sseClients.forEach(client => {
-      client.write(`data: ${JSON.stringify({ message })}\n\n`);
+      client.write(`data: ${JSON.stringify(payload)}\n\n`);
     });
   });
 }

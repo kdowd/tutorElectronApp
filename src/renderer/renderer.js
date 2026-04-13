@@ -55,9 +55,13 @@ dropZone.addEventListener('drop', async (e) => {
         li.innerText = file;
         fileListEl.appendChild(li);
       });
-      // Broadcast to LAN clients with folder name
+      // Broadcast to LAN clients with folder name and file list
       const folderName = files[0].name;
-      window.electronAPI.sendToClients(`new folder to display: ${folderName}`);
+      window.electronAPI.sendToClients({
+        message: `New folder displayed: ${folderName}`,
+        folderName: folderName,
+        files: result.files
+      });
     } else {
       responseEl.innerText = `Error: ${result.error}`;
     }

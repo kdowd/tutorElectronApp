@@ -1,52 +1,114 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Special App - Client</title>
     <style>
-        body {
-            background-color: orange;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: sans-serif;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-        h1 {
-            font-size: 3rem;
-        }
+      body {
+        margin: 0;
+        font-family: sans-serif;
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 20px;
+        transition: background-color 0.3s ease;
+      }
+      .left {
+        background-color: rebeccapurple;
+        border-right: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      .right {
+        background-color: #2c3e50;
+      }
+      h1 {
+        font-size: 3rem;
+        margin: 0;
+      }
+      #messageDisplay {
+        font-size: 1.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        min-height: 100px;
+        width: 80%;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+      .status {
+        position: absolute;
+        bottom: 10px;
+        font-size: 0.8rem;
+        opacity: 0.7;
+      }
     </style>
-</head>
-<body>
-    <h1>Hello World</h1>
-    <div id="messageDisplay" style="margin-top: 20px; font-size: 1.5rem; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 5px; min-height: 50px;">
-        Waiting for messages...
+  </head>
+  <body>
+    <div class="column left">
+      <div id="messageDisplay">Waiting for messages...</div>
+      <h1>My Special App</h1>
+      <p>LAN Client Interface</p>
+      <div id="folderInfo" style="margin-top: 20px; text-align: left; width: 100%; display: none">
+        <h3 id="folderTitle" style="border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding-bottom: 5px"></h3>
+        <ul id="fileList" style="list-style: none; padding: 0; max-height: 300px; overflow-y: auto"></ul>
+      </div>
+    </div>
+    <div class="column right" id="rightColumn">
+      <div class="status" id="status">Connected to host</div>
     </div>
 
     <script>
-        const eventSource = new EventSource('/events');
-        const display = document.getElementById('messageDisplay');
+      const eventSource = new EventSource("/events");
+      const display = document.getElementById("messageDisplay");
+      const rightColumn = document.getElementById("rightColumn");
+      const status = document.getElementById("status");
+      const folderInfo = document.getElementById("folderInfo");
+      const folderTitle = document.getElementById("folderTitle");
+      const fileList = document.getElementById("fileList");
 
-        eventSource.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.message) {
-                display.innerText = `New Message: ${data.message}`;
-                // Briefly flash the background to get attention
-                document.body.style.backgroundColor = 'gold';
-                setTimeout(() => {
-                    document.body.style.backgroundColor = 'orange';
-                }, 1000);
-            }
-        };
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
 
-        eventSource.onerror = () => {
-            console.error("EventSource failed.");
-            display.innerText = "Connection lost. Reconnecting...";
-        };
+        if (data.message) {
+          display.innerText = `New Message: ${data.message}`;
+
+          // Flash the right column to get attention
+          const originalColor = rightColumn.style.backgroundColor;
+          rightColumn.style.backgroundColor = "gold";
+          setTimeout(() => {
+            rightColumn.style.backgroundColor = originalColor;
+          }, 1000);
+        }
+
+        if (data.folderName && data.files) {
+          folderInfo.style.display = "block";
+          folderTitle.innerText = `Folder: ${data.folderName}`;
+          fileList.innerHTML = ""; // Clear existing
+          data.files.forEach((file) => {
+            const li = document.createElement("li");
+            li.style.padding = "5px 0";
+            li.style.borderBottom = "1px solid rgba(255,255,255,0.1)";
+            li.innerText = file;
+            fileList.appendChild(li);
+          });
+        }
+      };
+
+      eventSource.onerror = () => {
+        console.error("EventSource failed.");
+        display.innerText = "Connection lost.";
+        status.innerText = "Disconnected from host";
+        status.style.color = "#ff4757";
+      };
     </script>
-</body>
+  </body>
 </html>
