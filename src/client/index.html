@@ -4,17 +4,42 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Special App - Client</title>
-    <script src="prism.js"></script>
-    <link rel="stylesheet" href="prism.css" />
+
+    <link rel="stylesheet" href="./highlight/styles/default.min.css" />
+    <link rel="stylesheet" href="./highlight/styles/github-dark-dimmed.min.css" />
+
+    <script src="./highlight/highlight.min.js"></script>
+    <script src="./highlight/languages/css.min.js"></script>
+    <script src="./highlight/languages/php-template.min.js"></script>
+    <script src="./highlight/languages/markdown.min.js"></script>
+
+    <script>
+      hljs.registerLanguage("php-template", phpTemplate);
+      // hljs.registerLanguage("php", php);
+      hljs.registerLanguage("cpp", cpp);
+      hljs.registerLanguage("css", css);
+      hljs.registerLanguage("html", html);
+      hljs.registerLanguage("javascript", javascript);
+      hljs.registerLanguage("json", json);
+      hljs.registerLanguage("markdown", markdown);
+      hljs.registerLanguage("plaintext", plaintext);
+      hljs.registerLanguage("python", python);
+      hljs.highlightAll();
+    </script>
+
     <style>
       body {
         margin: 0;
         font-family: sans-serif;
-        color: white;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        color: lime;
+        /* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); */
         display: flex;
         height: 100vh;
         overflow: hidden;
+      }
+
+      #messageDisplay code.hljs {
+        font-size: 0.9rem;
       }
       .column {
         flex: 1;
@@ -61,7 +86,7 @@
         flex: 1;
         overflow-y: auto;
       }
-      /* Override Prism default background to match our container */
+      /* Override default background to match our container */
       pre[class*="language-"] {
         margin: 0 !important;
         background: transparent !important;
@@ -72,6 +97,10 @@
         bottom: 10px;
         font-size: 0.8rem;
         opacity: 0.7;
+      }
+      div.code,
+      #codeBlock {
+        white-space: pre;
       }
     </style>
   </head>
@@ -86,12 +115,16 @@
     </div>
     <div class="column right" id="rightColumn">
       <div class="display-container">
-        <pre id="messageDisplay"><code id="codeBlock" class="language-plaintext">Click a file to view its contents...</code></pre>
+        <pre id="messageDisplay">
+          <code id="codeBlock" class="">
+     
+
+        </code>
+      </pre>
       </div>
       <div class="status" id="status">Connected to host</div>
     </div>
 
-    <!-- <script src="prism.js"></script> -->
     <script>
       const eventSource = new EventSource("/events");
       const codeBlock = document.getElementById("codeBlock");
@@ -101,10 +134,10 @@
       const folderTitle = document.getElementById("folderTitle");
       const fileList = document.getElementById("fileList");
 
-      // Map extensions to Prism language classes
+      // Map extensions to Highlight.js language classes
       const langMap = {
         js: "javascript",
-        html: "markup",
+        html: "html",
         css: "css",
         cpp: "cpp",
         h: "cpp",
@@ -112,6 +145,8 @@
         json: "json",
         md: "markdown",
         txt: "plaintext",
+        php: "php",
+        py: "python",
       };
 
       eventSource.onmessage = (event) => {
@@ -123,17 +158,7 @@
         }
 
         if (data.folderName && data.files) {
-          folderInfo.style.display = "block";
-          folderTitle.innerText = `Folder: ${data.folderName}`;
-          fileList.innerHTML = "";
-          data.files.forEach((file) => {
-            const li = document.createElement("li");
-            li.innerText = file;
-            li.onclick = () => {
-              fetchFileContent(file);
-            };
-            fileList.appendChild(li);
-          });
+          updateFolderUI(data.folderName, data.files);
           updateDisplay(`New folder loaded: ${data.folderName}`, "plaintext");
           flashRightColumn();
         }
@@ -147,6 +172,7 @@
           if (data.success) {
             const ext = filename.split(".").pop().toLowerCase();
             const lang = langMap[ext] || "plaintext";
+
             updateDisplay(data.content, lang);
           } else {
             updateDisplay(`Error: ${data.error}`, "plaintext");
@@ -156,16 +182,45 @@
         }
       }
 
-      function updateDisplay(content, lang) {
-        codeBlock.className = `language-${lang}`;
-        codeBlock.textContent = content;
+      function updateFolderUI(folderName, files) {
+        folderInfo.style.display = "block";
+        folderTitle.innerText = `Folder: ${folderName}`;
+        fileList.innerHTML = "";
+        files.forEach((file) => {
+          const li = document.createElement("li");
+          li.innerText = file;
+          li.onclick = () => {
+            fetchFileContent(file);
+          };
+          fileList.appendChild(li);
+        });
+      }
 
-        // Safety check if Prism failed to load
-        if (typeof Prism !== "undefined") {
-          Prism.highlightElement(codeBlock);
-        } else {
-          console.error("Prism not loaded yet.");
+      async function checkInitialState() {
+        try {
+          const response = await fetch("/current-folder");
+          const data = await response.json();
+          if (data && data.folderName && data.files) {
+            updateFolderUI(data.folderName, data.files);
+            updateDisplay(`Connected to host. Showing active folder: ${data.folderName}`, "plaintext");
+          }
+        } catch (err) {
+          console.error("Failed to fetch initial state:", err);
         }
+      }
+
+      // Check for current directory on load
+      window.addEventListener("DOMContentLoaded", checkInitialState);
+
+      function updateDisplay(content, lang) {
+        codeBlock.className = `language-${lang} hljs`;
+        codeBlock.textContent = content;
+        codeBlock.removeAttribute("data-highlighted");
+        hljs.highlightElement(codeBlock);
+        //)
+        // setTimeout(() => {
+        //   hljs.highlightElement(codeBlock);
+        // }, 1000);
       }
 
       function flashRightColumn() {

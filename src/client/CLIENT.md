@@ -11,7 +11,7 @@ This directory contains the public-facing web interface served to LAN users via 
 - **Served from:** `src/client/`
 - `/events`: Real-time Server-Sent Events endpoint.
 - `/read-file`: API for retrieving file content.
-- **Dependencies:** None (Vanilla HTML/JS/CSS).
+- **Dependencies:** [Highlight.js](https://highlightjs.org/) (Local syntax highlighting library).
 
 ## To-Do / Future Goals
 - [x] Improve UI/UX of the client page (Two-column layout).

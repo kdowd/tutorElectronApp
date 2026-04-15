@@ -6,7 +6,7 @@
 - **Framework:** [Electron](https://www.electronjs.org/) (v34.2.0)
 - **Runtime:** Node.js
 - **Frontend:** Vanilla HTML, CSS, and JavaScript
-- **Syntax Highlighting:** [Prism.js](https://prismjs.com/) (v1.29.0)
+- **Syntax Highlighting:** [Highlight.js](https://highlightjs.org/) (v11.11.1)
 - **Build Tool:** `electron-builder`
 - **Modules:** `http` (local server & SSE), `os` (IP detection), `fs` (file operations)
 
@@ -21,7 +21,8 @@
 - **Real-Time Messaging:** Broadcasts custom text messages from the Electron app's messaging view to all connected LAN clients using SSE.
 - **Folder Syncing:** Automatically broadcasts folder names and file lists to LAN clients when a folder is dropped on the host.
 - **Remote File Reading:** LAN clients can click on filenames to request and display the text content of files from the host's active folder.
-- **Syntax Highlighting:** Integrated Prism.js for code highlighting in the client interface (supporting JS, CPP, HTML, CSS, MD, etc.).
+- **State Persistence:** LAN clients automatically fetch and display the currently active folder upon connecting or refreshing the page.
+- **Syntax Highlighting:** Integrated Highlight.js for code highlighting in the client interface (supporting JS, CPP, HTML, CSS, MD, etc.).
 - **Client/Renderer Separation:** Distinct interfaces for the local administrator (Electron) and remote LAN viewers (Web Browser).
 
 ## Building and Running
@@ -53,6 +54,7 @@ npm run dist
 ### HTTP Endpoints (LAN Client)
 - `/events`: SSE stream for real-time updates.
 - `/read-file?filename=name`: Returns the JSON content of a file in the active folder.
+- `/current-folder`: Returns the JSON state (folder name and file list) of the currently active folder.
 
 ### Directory Structure
 - `src/main/`: Core logic, Electron main process, and SSE server.
@@ -61,5 +63,5 @@ npm run dist
     - `messaging.html`/`messaging.js`: Messaging view.
 - `src/client/`: Public-facing assets for LAN clients.
     - `index.html`: Client UI with two-column layout.
-    - `prism.js` / `prism.css`: Local syntax highlighting library.
+    - `highlight/`: Local syntax highlighting library (Highlight.js).
 - `dist/`: Output directory for production builds.

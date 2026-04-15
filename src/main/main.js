@@ -8,6 +8,7 @@ let mainWindow;
 let serverAddress = '';
 let sseClients = []; // Track connected SSE clients for messaging
 let currentFolderPath = ''; // Track the path of the last dropped folder
+let lastFolderState = null; // Track the last folder broadcast state (name and file list)
 
 function getLocalIp() {
   const interfaces = os.networkInterfaces();
@@ -60,6 +61,13 @@ async function startLocalServer() {
         res.writeHead(500);
         res.end(JSON.stringify({ error: 'Could not read file' }));
       }
+      return;
+    }
+
+    // New endpoint to get the current folder state
+    if (req.url === '/current-folder') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(lastFolderState || { folderName: null, files: [] }));
       return;
     }
 
@@ -200,6 +208,15 @@ function createWindow() {
   ipcMain.on('send-to-clients', (event, data) => {
     console.log(`Broadcasting to clients:`, data);
     const payload = typeof data === 'string' ? { message: data } : data;
+    
+    // Store folder state for new clients
+    if (payload.folderName && payload.files) {
+      lastFolderState = {
+        folderName: payload.folderName,
+        files: payload.files
+      };
+    }
+
     sseClients.forEach(client => {
       client.write(`data: ${JSON.stringify(payload)}\n\n`);
     });

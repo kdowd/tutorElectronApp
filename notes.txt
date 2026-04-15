@@ -7,3 +7,15 @@ gemini --resume 'f848e275-b8cd-4252-85b9-57ed964d12ea'
 
 
    To resume this session: gemini --resume 'ece8e3f0-26d2-41e2-bb10-85fd92b8dc4f'    
+
+
+
+//https://highlightjs.org/demo
+
+   <script type="importmap">
+{
+	"imports": {
+		"@highlightjs": "./assets/js/@highlightjs/cdn-assets/es/"
+	}
+}
+</script>
