@@ -1,7 +1,8 @@
 :root {
-  --background-main: #002635;
+  --background-main: #282b2e;
   --background-minor: #a1a19a;
   --site-font-main-colour: whitesmoke;
+  --flash-colour: #f27d00;
 }
 
 body {
