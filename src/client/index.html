@@ -6,108 +6,32 @@
     <title>My Special App - Client</title>
 
     <link rel="stylesheet" href="./highlight/styles/default.min.css" />
-    <link rel="stylesheet" href="./highlight/styles/github-dark-dimmed.min.css" />
-
+    <!-- <link rel="stylesheet" href="./highlight/styles/androidstudio.min.css" /> -->
+    <link rel="stylesheet" href="./highlight/styles/base16/atlas.min.css" />
+    <!-- <link rel="stylesheet" href="./highlight/styles/rose-pine-moon.min.css" /> -->
     <script src="./highlight/highlight.min.js"></script>
     <script src="./highlight/languages/css.min.js"></script>
     <script src="./highlight/languages/php-template.min.js"></script>
     <script src="./highlight/languages/markdown.min.js"></script>
+    <script src="./highlight/languages/http.min.js"></script>
+    <script src="./highlight/languages/javascript.min.js"></script>
+    <script src="./highlight/languages/json.min.js"></script>
+    <script src="./highlight/languages/scss.min.js"></script>
+    <script src="./highlight/languages/typescript.min.js"></script>
+    <script src="./highlight/languages/cpp.min.js"></script>
+    <script src="./highlight/languages/c.min.js"></script>
 
     <script>
-      hljs.registerLanguage("php-template", phpTemplate);
-      // hljs.registerLanguage("php", php);
-      hljs.registerLanguage("cpp", cpp);
-      hljs.registerLanguage("css", css);
-      hljs.registerLanguage("html", html);
-      hljs.registerLanguage("javascript", javascript);
-      hljs.registerLanguage("json", json);
-      hljs.registerLanguage("markdown", markdown);
-      hljs.registerLanguage("plaintext", plaintext);
-      hljs.registerLanguage("python", python);
       hljs.highlightAll();
     </script>
 
-    <style>
-      body {
-        margin: 0;
-        font-family: sans-serif;
-        color: lime;
-        /* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); */
-        display: flex;
-        height: 100vh;
-        overflow: hidden;
-      }
-
-      #messageDisplay code.hljs {
-        font-size: 0.9rem;
-      }
-      .column {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 20px;
-        transition: background-color 0.3s ease;
-      }
-      .left {
-        background-color: rebeccapurple;
-        border-right: 2px solid rgba(255, 255, 255, 0.1);
-      }
-      #fileList li {
-        padding: 8px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        transition: background-color 0.2s;
-      }
-      #fileList li:hover {
-        background-color: rgba(255, 255, 255, 0.2);
-        cursor: pointer;
-      }
-      .right {
-        background-color: #2c3e50;
-        justify-content: center;
-      }
-      h1 {
-        font-size: 2.5rem;
-        margin: 10px 0;
-      }
-      .display-container {
-        width: 95%;
-        height: 85vh;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 10px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-      }
-      #messageDisplay {
-        margin: 0;
-        padding: 20px;
-        flex: 1;
-        overflow-y: auto;
-      }
-      /* Override default background to match our container */
-      pre[class*="language-"] {
-        margin: 0 !important;
-        background: transparent !important;
-        height: 100%;
-      }
-      .status {
-        position: absolute;
-        bottom: 10px;
-        font-size: 0.8rem;
-        opacity: 0.7;
-      }
-      div.code,
-      #codeBlock {
-        white-space: pre;
-      }
-    </style>
+    <link rel="stylesheet" href="./client.css" />
   </head>
   <body>
     <div class="column left">
-      <h1>My Special App</h1>
-      <p>LAN Client Interface</p>
+      <h4>Remote Project View:</h4>
+      <div class="status" id="status">Connected to host</div>
+
       <div id="folderInfo" style="margin-top: 20px; text-align: left; width: 100%; display: none">
         <h3 id="folderTitle" style="border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding-bottom: 5px"></h3>
         <ul id="fileList" style="list-style: none; padding: 0; max-height: 60vh; overflow-y: auto"></ul>
@@ -117,12 +41,11 @@
       <div class="display-container">
         <pre id="messageDisplay">
           <code id="codeBlock" class="">
-     
+              waiting for server update.....
 
         </code>
       </pre>
       </div>
-      <div class="status" id="status">Connected to host</div>
     </div>
 
     <script>

@@ -20,6 +20,9 @@
 - **Local Network Server:** Automatically starts an HTTP server on the local machine's IPv4 address.
 - **Real-Time Messaging:** Broadcasts custom text messages from the Electron app's messaging view to all connected LAN clients using SSE.
 - **Folder Syncing:** Automatically broadcasts folder names and file lists to LAN clients when a folder is dropped on the host.
+- **Folder Watching:** Uses `fs.watch` to monitor the active folder for changes, triggering automatic UI refreshes for the host and all clients.
+- **Sorted File Lists:** File lists are automatically sorted by modification date (newest first) to prioritize recent changes.
+- **File Filtering:** Automatically filters out hidden files (starting with `.`) and `.exe` files from the displayed file list.
 - **Remote File Reading:** LAN clients can click on filenames to request and display the text content of files from the host's active folder.
 - **State Persistence:** LAN clients automatically fetch and display the currently active folder upon connecting or refreshing the page.
 - **Syntax Highlighting:** Integrated Highlight.js for code highlighting in the client interface (supporting JS, CPP, HTML, CSS, MD, etc.).
@@ -48,6 +51,7 @@ npm run dist
 - **Messaging:** Use the `send-to-clients` IPC channel to trigger a broadcast from the main process to all SSE-connected clients.
 - **Folder Tracking:** Use the `setCurrentFolder` IPC channel to track the active folder for remote file requests.
 - **Directory Reading:** Use the `read-directory` IPC handle to retrieve file lists from the main process.
+- **Folder Updates:** Listen for `update-folder-ui` events from the main process to refresh the local file list.
 - **Server Information:** Use the `onServerInfo` listener to receive the local shareable URL.
 - **File Paths:** Use `window.electronAPI.getPathForFile(file)` for secure path retrieval from dropped files.
 

@@ -9,6 +9,103 @@ let serverAddress = '';
 let sseClients = []; // Track connected SSE clients for messaging
 let currentFolderPath = ''; // Track the path of the last dropped folder
 let lastFolderState = null; // Track the last folder broadcast state (name and file list)
+let folderWatcher = null; // Track the active fs.watcher instance
+
+async function isBinaryFile(filePath) {
+  try {
+    const handle = await fs.open(filePath, 'r');
+    const { buffer } = await handle.read(Buffer.alloc(512), 0, 512, 0);
+    await handle.close();
+    for (let i = 0; i < buffer.length; i++) {
+      if (buffer[i] === 0) return true; // Null byte indicates binary
+    }
+    return false;
+  } catch (err) {
+    return false;
+  }
+}
+
+async function getFilteredSortedFiles(folderPath) {
+  const filenames = await fs.readdir(folderPath);
+  
+  const filesWithStats = await Promise.all(
+    filenames.map(async (name) => {
+      // 1. Skip hidden files (starting with .)
+      if (name.startsWith('.')) return null;
+      
+      // 2. Skip .exe files
+      if (name.toLowerCase().endsWith('.exe')) return null;
+
+      const filePath = path.join(folderPath, name);
+      try {
+        const stats = await fs.stat(filePath);
+        if (!stats.isFile()) return null;
+
+        // Binary check removed - allowing all files (including images)
+        
+        return { name, mtime: stats.mtimeMs };
+      } catch (e) {
+        return null;
+      }
+    })
+  );
+
+  return filesWithStats
+    .filter(f => f !== null)
+    .sort((a, b) => b.mtime - a.mtime)
+    .map(f => f.name);
+}
+
+async function refreshCurrentFolder() {
+  if (!currentFolderPath) return;
+
+  try {
+    const sortedFiles = await getFilteredSortedFiles(currentFolderPath);
+    const folderName = path.basename(currentFolderPath);
+    
+    const payload = {
+      message: `Folder refreshed: ${folderName}`,
+      folderName: folderName,
+      files: sortedFiles
+    };
+
+    // Update state
+    lastFolderState = {
+      folderName: folderName,
+      files: sortedFiles
+    };
+
+    // Broadcast to SSE clients
+    console.log(`Broadcasting refresh to clients for: ${folderName}`);
+    sseClients.forEach(client => {
+      client.write(`data: ${JSON.stringify(payload)}\n\n`);
+    });
+
+    // Notify local renderer
+    if (mainWindow) {
+      mainWindow.webContents.send('update-folder-ui', payload);
+    }
+  } catch (error) {
+    console.error('Error refreshing folder:', error);
+  }
+}
+
+function startWatching(folderPath) {
+  if (folderWatcher) {
+    folderWatcher.close();
+  }
+
+  try {
+    const fsSync = require('fs');
+    folderWatcher = fsSync.watch(folderPath, { recursive: false }, (eventType, filename) => {
+      console.log(`File change detected: ${eventType} on ${filename}`);
+      refreshCurrentFolder();
+    });
+    console.log(`Started watching: ${folderPath}`);
+  } catch (error) {
+    console.error('Error starting watcher:', error);
+  }
+}
 
 function getLocalIp() {
   const interfaces = os.networkInterfaces();
@@ -196,8 +293,8 @@ function createWindow() {
 
   ipcMain.handle('read-directory', async (event, folderPath) => {
     try {
-      const files = await fs.readdir(folderPath);
-      return { success: true, files };
+      const sortedFiles = await getFilteredSortedFiles(folderPath);
+      return { success: true, files: sortedFiles };
     } catch (error) {
       console.error('Error reading directory:', error);
       return { success: false, error: error.message };
@@ -226,6 +323,7 @@ function createWindow() {
   ipcMain.on('set-current-folder', (event, path) => {
     console.log(`Current folder set to: ${path}`);
     currentFolderPath = path;
+    startWatching(path);
   });
 }
 

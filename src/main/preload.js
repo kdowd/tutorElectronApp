@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onServerInfo: (callback) => ipcRenderer.on('server-info', (_event, value) => callback(value)),
   sendToClients: (message) => ipcRenderer.send('send-to-clients', message),
   setCurrentFolder: (path) => ipcRenderer.send('set-current-folder', path),
+  onUpdateFolderUI: (callback) => ipcRenderer.on('update-folder-ui', (_event, value) => callback(value)),
 });
 
 

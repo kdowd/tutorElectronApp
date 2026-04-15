@@ -8,6 +8,19 @@ window.electronAPI.onServerInfo((address) => {
   serverStatusBar.innerText = `Shareable Local URL: ${address}`;
 });
 
+window.electronAPI.onUpdateFolderUI((payload) => {
+  console.log('Received folder update:', payload);
+  if (payload.files) {
+    fileListEl.innerHTML = '';
+    payload.files.forEach(file => {
+      const li = document.createElement('li');
+      li.innerText = file;
+      fileListEl.appendChild(li);
+    });
+    responseEl.innerText = payload.message || 'Folder refreshed.';
+  }
+});
+
 pingBtn.addEventListener('click', () => {
   window.electronAPI.ping();
 });

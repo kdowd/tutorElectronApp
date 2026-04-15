@@ -1,21 +1,10 @@
-monday 13.04
-gemini --resume 'f848e275-b8cd-4252-85b9-57ed964d12ea'
+Session Details:
+- Current Session ID: 02b5ef48-d8a5-45c6-91bc-dc1b181197c6
+- Key Changes:
+  - Migrated to Highlight.js.
+  - Implemented persistent directory state for LAN clients.
+  - Restored folder watching (fs.watch) and automatic UI refresh.
+  - Restored file list sorting by modification date (newest first).
+  - Added file filtering: hidden files (starting with `.`) and `.exe` files are now excluded.
 
-  Session Details:
-   - Session ID: 02b5ef48-d8a5-45c6-91bc-dc1b181197c6
-   - Resume Command: gemini --resume 02b5ef48-d8a5-45c6-91bc-dc1b181197c6
-
-
-   To resume this session: gemini --resume 'ece8e3f0-26d2-41e2-bb10-85fd92b8dc4f'    
-
-
-
-//https://highlightjs.org/demo
-
-   <script type="importmap">
-{
-	"imports": {
-		"@highlightjs": "./assets/js/@highlightjs/cdn-assets/es/"
-	}
-}
-</script>
+To resume this session: gemini --resume '02b5ef48-d8a5-45c6-91bc-dc1b181197c6'
