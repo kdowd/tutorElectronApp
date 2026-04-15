@@ -1,0 +1,21 @@
+# Effective Communication with Gemini CLI: Using GEMINI.md
+
+Using a `GEMINI.md` file is one of the most effective ways to communicate project intentions. It acts as a **foundational mandate** that takes precedence over general defaults, providing an immediate, high-fidelity map of the project's architecture and conventions.
+
+## Why GEMINI.md is Effective:
+- **Architectural Guardrails:** Listing IPC channels and HTTP endpoints prevents "hallucinations" and ensures alignment with existing patterns.
+- **Technology Lock-in:** Specifying libraries (e.g., Highlight.js vs. Prism.js) prevents incorrect suggestions.
+- **Separation of Concerns:** Clearly defining the roles of the Main process, Renderer, and Client keeps the development focused.
+
+## Optimizing for "Level 10" Clarity:
+To further enhance communication, consider adding these sections:
+
+1. **Rules & Constraints:** List personal preferences (e.g., "Prefer arrow functions," "No external CSS libraries") for me to follow as "law."
+2. **Current Sprint / Active Goal:** A "Current Task" section helps me immediately understand where we left off.
+3. **Known Quirks:** Document intentional "bugs" or library behaviors to prevent unnecessary "fixes."
+4. **Definition of Done:** Explicitly state what constitutes a finished feature (e.g., "Code + Documentation + Manual Test").
+
+## Additional Tool: `save_memory`
+Use `save_memory` with the `project` scope for environment-specific facts (e.g., Node version, local pathing issues) that aren't suitable for the shared `GEMINI.md`.
+
+**Summary:** GEMINI.md is essential for maintaining project state across sessions and branches. It allows for quick identification of missing or inconsistent code, ensuring a more reliable and efficient development process.

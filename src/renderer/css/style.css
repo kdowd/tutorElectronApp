@@ -1,8 +1,12 @@
+:root {
+  --site-background: #e7f3ff;
+  --custom-element-background: #0056b361;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   padding: 2rem;
-  background-color: #f0f0f0;
+  background-color: var(--site-background);
   margin-top: 40px; /* Space for the status bar */
 }
 
@@ -11,13 +15,17 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #28a745;
+  background-color: var(--custom-element-background);
   color: white;
   padding: 10px;
   text-align: center;
   font-weight: bold;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 h1 {
@@ -48,6 +56,7 @@ button:hover {
   color: #666;
   margin-top: 20px;
   transition: all 0.3s ease;
+  background-color: rgb(100 149 237 / 9%);
 }
 
 #dropZone.hover {
@@ -62,9 +71,10 @@ button:hover {
 }
 
 #fileList li {
-  background: #fff;
   margin-bottom: 5px;
-  padding: 8px;
+  padding: 6px 20px;
   border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  background-color: rgb(87 87 85 / 25%);
+  background: url(../../assets/simple_arrow.svg) 6px 60% no-repeat;
 }

@@ -1,27 +1,55 @@
-const pingBtn = document.getElementById('pingBtn');
-const responseEl = document.getElementById('response');
-const dropZone = document.getElementById('dropZone');
-const fileListEl = document.getElementById('fileList');
-const serverStatusBar = document.getElementById('serverStatusBar');
+const pingBtn = document.getElementById("pingBtn");
+const responseEl = document.getElementById("response");
+const dropZone = document.getElementById("dropZone");
+const fileListEl = document.getElementById("fileList");
+const serverStatusBar = document.getElementById("serverStatusBar");
+const serverUrl = document.getElementById("serverUrl");
+const copyIcon = document.getElementById("copyIcon");
+
+let fullAddress = "";
 
 window.electronAPI.onServerInfo((address) => {
-  serverStatusBar.innerText = `Shareable Local URL: ${address}`;
+  fullAddress = address;
+  serverUrl.innerText = `LAN IP: ${address}`;
 });
 
-window.electronAPI.onUpdateFolderUI((payload) => {
-  console.log('Received folder update:', payload);
-  if (payload.files) {
-    fileListEl.innerHTML = '';
-    payload.files.forEach(file => {
-      const li = document.createElement('li');
-      li.innerText = file;
-      fileListEl.appendChild(li);
-    });
-    responseEl.innerText = payload.message || 'Folder refreshed.';
+copyIcon.addEventListener("click", async () => {
+  if (fullAddress) {
+    try {
+      await navigator.clipboard.writeText(fullAddress);
+
+      // Visual feedback
+      const originalTitle = copyIcon.title;
+      copyIcon.title = "Copied!";
+      serverUrl.innerText = "Copied to clipboard!";
+
+      setTimeout(() => {
+        copyIcon.title = originalTitle;
+        serverUrl.innerText = `LAN IP: ${fullAddress}`;
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
   }
 });
 
-pingBtn.addEventListener('click', () => {
+window.electronAPI.onUpdateFolderUI((payload) => {
+  console.log("Received folder update:", payload);
+  if (payload.files) {
+    fileListEl.innerHTML = "";
+    payload.files.forEach((file) => {
+      const li = document.createElement("li");
+      // const sym = document.createElement("img");
+      // sym.src = "../assets/simple_arrow.svg";
+      // li.appendChild(sym);
+      li.innerText = file;
+      fileListEl.appendChild(li);
+    });
+    responseEl.innerText = payload.message || "Folder refreshed.";
+  }
+});
+
+pingBtn.addEventListener("click", () => {
   window.electronAPI.ping();
 });
 
@@ -30,44 +58,44 @@ window.electronAPI.onPong((message) => {
 });
 
 window.electronAPI.onRescan(() => {
-  responseEl.innerText = 'Rescanning... Please wait.';
+  responseEl.innerText = "Rescanning... Please wait.";
   setTimeout(() => {
-    responseEl.innerText = 'Rescan complete.';
+    responseEl.innerText = "Rescan complete.";
   }, 2000);
 });
 
 // Drag and Drop Logic
-dropZone.addEventListener('dragover', (e) => {
+dropZone.addEventListener("dragover", (e) => {
   e.preventDefault();
   e.stopPropagation();
-  dropZone.classList.add('hover');
+  dropZone.classList.add("hover");
 });
 
-dropZone.addEventListener('dragleave', (e) => {
+dropZone.addEventListener("dragleave", (e) => {
   e.preventDefault();
   e.stopPropagation();
-  dropZone.classList.remove('hover');
+  dropZone.classList.remove("hover");
 });
 
-dropZone.addEventListener('drop', async (e) => {
+dropZone.addEventListener("drop", async (e) => {
   e.preventDefault();
   e.stopPropagation();
-  dropZone.classList.remove('hover');
+  dropZone.classList.remove("hover");
 
   const files = e.dataTransfer.files;
   if (files.length > 0) {
     const folderPath = window.electronAPI.getPathForFile(files[0]);
     responseEl.innerText = `Reading folder: ${folderPath}`;
-    
+
     // Set the folder in the main process
     window.electronAPI.setCurrentFolder(folderPath);
-    
+
     const result = await window.electronAPI.readDirectory(folderPath);
-    
+
     if (result.success) {
-      fileListEl.innerHTML = ''; // Clear previous list
-      result.files.forEach(file => {
-        const li = document.createElement('li');
+      fileListEl.innerHTML = ""; // Clear previous list
+      result.files.forEach((file) => {
+        const li = document.createElement("li");
         li.innerText = file;
         fileListEl.appendChild(li);
       });
@@ -76,7 +104,7 @@ dropZone.addEventListener('drop', async (e) => {
       window.electronAPI.sendToClients({
         message: `New folder displayed: ${folderName}`,
         folderName: folderName,
-        files: result.files
+        files: result.files,
       });
     } else {
       responseEl.innerText = `Error: ${result.error}`;

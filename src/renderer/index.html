@@ -3,17 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <title>My Special App</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/custom.css" />
   </head>
   <body>
-    <div id="serverStatusBar">Local Network Address: Detecting...</div>
-    <h1>Welcome to My Special App</h1>
-    <p>This is a complex project initialized by Gemini CLI.</p>
-    <button id="pingBtn">Send Ping to Main Process</button>
-    <p id="response"></p>
+    <div id="serverStatusBar">
+      <span id="serverUrl">Local Network Address: Detecting...</span>
+      <img src="../assets/clipboard.svg" id="copyIcon" title="Copy to clipboard" alt="Copy Icon" />
+    </div>
     <div id="dropZone">Drop a folder here</div>
-    <h2>Files in folder:</h2>
+    <h4>Files in folder:</h4>
     <ul id="fileList"></ul>
+    <footer>
+      <button id="pingBtn">Ping Main Process</button>
+      <p id="response"></p>
+    </footer>
     <script src="renderer.js"></script>
   </body>
 </html>

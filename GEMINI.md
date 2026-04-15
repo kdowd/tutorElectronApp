@@ -18,6 +18,7 @@
 
 ## Features
 - **Local Network Server:** Automatically starts an HTTP server on the local machine's IPv4 address.
+- **Copy to Clipboard:** One-click copying of the local network address from the host application's status bar.
 - **Real-Time Messaging:** Broadcasts custom text messages from the Electron app's messaging view to all connected LAN clients using SSE.
 - **Folder Syncing:** Automatically broadcasts folder names and file lists to LAN clients when a folder is dropped on the host.
 - **Folder Watching:** Uses `fs.watch` to monitor the active folder for changes, triggering automatic UI refreshes for the host and all clients.

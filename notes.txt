@@ -6,5 +6,11 @@ Session Details:
   - Restored folder watching (fs.watch) and automatic UI refresh.
   - Restored file list sorting by modification date (newest first).
   - Added file filtering: hidden files (starting with `.`) and `.exe` files are now excluded.
+  - Added "File is empty" message for 0-byte files in the client.
+  - Implemented UI persistence in the client (folder updates don't overwrite currently viewed files).
+  - Added "Copy to Clipboard" for the local network address in the host application.
+- Future Goals:
+  - Add unit tests (Jest/Vitest).
+  - Add support for non-text file types.
 
 To resume this session: gemini --resume '02b5ef48-d8a5-45c6-91bc-dc1b181197c6'

@@ -76,18 +76,28 @@
         const data = JSON.parse(event.data);
 
         if (data.message && !data.files) {
-          updateDisplay(`Broadcast: ${data.message}`, "plaintext");
+          // If the user is currently NOT viewing a file, show the broadcast message
+          // Otherwise, we just let the message pass so it doesn't interrupt reading
+          if (!currentViewingFile) {
+            updateDisplay(`Broadcast: ${data.message}`, "plaintext");
+          }
           flashRightColumn();
         }
 
         if (data.folderName && data.files) {
           updateFolderUI(data.folderName, data.files);
-          updateDisplay(`New folder loaded: ${data.folderName}`, "plaintext");
+          // Only show "New folder loaded" if we aren't currently viewing a file
+          if (!currentViewingFile) {
+            updateDisplay(`New folder loaded: ${data.folderName}`, "plaintext");
+          }
           flashRightColumn();
         }
       };
 
+      let currentViewingFile = null;
+
       async function fetchFileContent(filename) {
+        currentViewingFile = filename;
         updateDisplay(`Loading ${filename}...`, "plaintext");
         try {
           const response = await fetch(`/read-file?filename=${encodeURIComponent(filename)}`);
@@ -136,14 +146,15 @@
       window.addEventListener("DOMContentLoaded", checkInitialState);
 
       function updateDisplay(content, lang) {
+        if (!content || content.trim() === "") {
+          codeBlock.innerHTML = "<i>File is empty - No content to show</i>";
+          codeBlock.className = "hljs";
+          return;
+        }
         codeBlock.className = `language-${lang} hljs`;
         codeBlock.textContent = content;
         codeBlock.removeAttribute("data-highlighted");
         hljs.highlightElement(codeBlock);
-        //)
-        // setTimeout(() => {
-        //   hljs.highlightElement(codeBlock);
-        // }, 1000);
       }
 
       function flashRightColumn() {
