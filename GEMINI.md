@@ -2,7 +2,12 @@
 
 `myspecialapp` is an Electron-based application developed with a clear separation between the main process, preload scripts, the renderer process, and a separate client interface for LAN users. It uses `electron-builder` for packaging and distribution.
 
+## Overview
+
+The idea is that the tutor works on a project and can broadcast all the files and folders in that project to students who load the client via a browser on the LAN. The student can view any file in the project and make sense of the code wothout waiting for the tutor to display the file on the shared screen or the class'es digital whiteboard. The student should be able to read but never edit the files in the project. Also the student will be able to view images. FOr example if the tutor is building a website it's very useful for student to be able to view the images in the images folder becuse it helps them understand how the website works.
+
 ## Technologies
+
 - **Framework:** [Electron](https://www.electronjs.org/) (v34.2.0)
 - **Runtime:** Node.js
 - **Frontend:** Vanilla HTML, CSS, and JavaScript
@@ -11,12 +16,14 @@
 - **Modules:** `http` (local server & SSE), `os` (IP detection), `fs` (file operations)
 
 ## Architecture
+
 - **Main Process (`src/main/main.js`):** Manages the application lifecycle, handles native menus, and hosts a local HTTP server. It implements a **Server-Sent Events (SSE)** endpoint (`/events`) to broadcast real-time messages to LAN clients.
 - **Preload Script (`src/main/preload.js`):** Securely exposes Electron APIs, including `ipcRenderer`, `webUtils.getPathForFile`, and the `sendToClients` messaging bridge.
 - **Renderer Process (`src/renderer/`):** Contains the primary application UI, including the Home view (drag-and-drop) and the Messaging view (global broadcasts).
 - **Client Interface (`src/client/`):** A simplified web interface served to LAN devices. It uses `EventSource` to listen for real-time messages from the Electron host.
 
 ## Features
+
 - **Local Network Server:** Automatically starts an HTTP server on the local machine's IPv4 address.
 - **Copy to Clipboard:** One-click copying of the local network address from the host application's status bar.
 - **Real-Time Messaging:** Broadcasts custom text messages from the Electron app's messaging view to all connected LAN clients using SSE.
@@ -32,23 +39,29 @@
 ## Building and Running
 
 ### Development
+
 To start the application in development mode:
+
 ```bash
 npm start
 ```
 
 ### Production Build
+
 To package the application for production (using `electron-builder`):
+
 ```bash
 npm run dist
 ```
 
 ### Testing
+
 - **TODO:** No automated test suite is currently configured in `package.json`.
 
 ## Development Conventions
 
 ### IPC Communication
+
 - **Messaging:** Use the `send-to-clients` IPC channel to trigger a broadcast from the main process to all SSE-connected clients.
 - **Folder Tracking:** Use the `setCurrentFolder` IPC channel to track the active folder for remote file requests.
 - **Directory Reading:** Use the `read-directory` IPC handle to retrieve file lists from the main process.
@@ -57,16 +70,19 @@ npm run dist
 - **File Paths:** Use `window.electronAPI.getPathForFile(file)` for secure path retrieval from dropped files.
 
 ### HTTP Endpoints (LAN Client)
+
 - `/events`: SSE stream for real-time updates.
 - `/read-file?filename=name`: Returns the JSON content of a file in the active folder.
 - `/current-folder`: Returns the JSON state (folder name and file list) of the currently active folder.
 
 ### Directory Structure
+
+- `src/assets/`: images, videos, svgs go inside this directory.
 - `src/main/`: Core logic, Electron main process, and SSE server.
 - `src/renderer/`: Frontend assets for the local Electron application.
-    - `index.html`/`renderer.js`: Home view (drag-and-drop).
-    - `messaging.html`/`messaging.js`: Messaging view.
+  - `index.html`/`renderer.js`: Home view (drag-and-drop).
+  - `messaging.html`/`messaging.js`: Messaging view.
 - `src/client/`: Public-facing assets for LAN clients.
-    - `index.html`: Client UI with two-column layout.
-    - `highlight/`: Local syntax highlighting library (Highlight.js).
+  - `index.html`: Client UI with two-column layout.
+  - `highlight/`: Local syntax highlighting library (Highlight.js).
 - `dist/`: Output directory for production builds.

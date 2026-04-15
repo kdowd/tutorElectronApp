@@ -3,6 +3,7 @@
 This directory contains the public-facing web interface served to LAN users via the Electron application's internal HTTP server.
 
 ## Current State
+
 - **Appearance:** A two-column layout. The left column shows the active folder and its file list; the right column displays broadcast messages and file contents.
 - **Sorting:** File lists are automatically sorted by modification date (newest first).
 - **Filtering:** Hidden files (starting with `.`) and `.exe` files are automatically filtered out.
@@ -11,6 +12,7 @@ This directory contains the public-facing web interface served to LAN users via 
 - **Interaction:** Read-only for broadcasts, but interactive for files. Clicking a filename in the left column fetches its content from the host via `/read-file` and displays it in the right column.
 
 ## Technical Details
+
 - **Served from:** `src/client/`
 - `/events`: Real-time Server-Sent Events endpoint.
 - `/read-file`: API for retrieving file content.
@@ -18,7 +20,10 @@ This directory contains the public-facing web interface served to LAN users via 
 - **Dependencies:** [Highlight.js](https://highlightjs.org/) (Local syntax highlighting library).
 
 ## To-Do / Future Goals
+
 - [x] Improve UI/UX of the client page (Two-column layout).
 - [x] Display folder contents sent from the host.
 - [x] Add client-to-server communication (File content requests).
-- [ ] Add support for non-text file types (images, PDFs).
+- [ ] Add support for non-text file types (images, PDFs). Images could open in an modal overlay or html dialog element
+- [ ] Add a refresh button to the client, it will call the main application for the latest file list, gives some control to the user which is good UX.
+- [ ] Add button to change the file views to light or dark theme. Hightlight.js can do this by loading different themes.
