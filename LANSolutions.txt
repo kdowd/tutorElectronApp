@@ -1,0 +1,26 @@
+# LAN and Remote Access Solutions for My Special App
+
+The application currently listens on all local network interfaces (`0.0.0.0`), meaning anyone on your same Wi-Fi or Local Area Network (LAN) can already connect using your local IP and port (e.g., `http://192.168.1.5:54321`).
+
+If you want clients *outside* your local network to connect, here are the best ways to achieve that:
+
+### 1. Simple Tunneling (Easiest & Most Flexible)
+Use a tunneling service to create a public URL that points to your local Electron server. This is perfect for remote students.
+*   **Tools:** [ngrok](https://ngrok.com/) or [localtunnel](https://theboroer.github.io/localtunnel-www/).
+*   **How it works:** You run a small command (e.g., `npx localtunnel --port 54321`), and it gives you a URL like `https://my-cool-app.loca.lt` that anyone can open in their browser.
+*   **Pros:** No router configuration needed; works over any internet connection.
+
+### 2. Tailscale (Secure Private Network)
+Create a "virtual LAN" that works over the internet.
+*   **Tools:** [Tailscale](https://tailscale.com/).
+*   **How it works:** You and your students all install Tailscale. It gives your computer a stable "Tailscale IP" (e.g., `100.64.0.5`). Students can use that IP to access your app from anywhere in the world as if they were in the same room.
+*   **Pros:** Extremely secure; very easy to set up.
+
+### 3. Port Forwarding (Traditional)
+Manually tell your home/office router to send external traffic to your computer.
+*   **How it works:** You log into your router settings and "forward" a specific port to your computer's internal IP.
+*   **Pros:** No third-party services required.
+*   **Cons:** Technical setup; can be a security risk; doesn't work on many public/university Wi-Fi networks.
+
+### Recommendation
+For a tutor-student setup where students might be remote, **Solution 1 (Tunneling)** is usually the best balance of ease and accessibility.

@@ -32,6 +32,7 @@ The idea is that the tutor works on a project and can broadcast all the files an
 - **Sorted File Lists:** File lists are automatically sorted by modification date (newest first) to prioritize recent changes.
 - **File Filtering:** Automatically filters out hidden files (starting with `.`) and `.exe` files from the displayed file list.
 - **Remote File Reading:** LAN clients can click on filenames to request and display the text content of files from the host's active folder.
+- **Active File Highlighting:** Visually indicates the currently viewed file in the client's file list for better navigation.
 - **State Persistence:** LAN clients automatically fetch and display the currently active folder upon connecting or refreshing the page.
 - **Syntax Highlighting:** Integrated Highlight.js for code highlighting in the client interface (supporting JS, CPP, HTML, CSS, MD, etc.).
 - **Client/Renderer Separation:** Distinct interfaces for the local administrator (Electron) and remote LAN viewers (Web Browser).

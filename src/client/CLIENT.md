@@ -10,6 +10,7 @@ This directory contains the public-facing web interface served to LAN users via 
 - **Messaging:** Uses `EventSource` to listen for real-time broadcasts from the server at the `/events` endpoint.
 - **State:** Automatically fetches the currently active folder state from the server on load/refresh using the `/current-folder` endpoint.
 - **Interaction:** Read-only for broadcasts, but interactive for files. Clicking a filename in the left column fetches its content from the host via `/read-file` and displays it in the right column.
+- **Active File Highlighting:** The currently viewed file in the project view is highlighted for better student navigation.
 
 ## Technical Details
 
@@ -22,6 +23,7 @@ This directory contains the public-facing web interface served to LAN users via 
 ## To-Do / Future Goals
 
 - [x] Improve UI/UX of the client page (Two-column layout).
+- [x] Highlight the currently viewing file in the project list.
 - [x] Display folder contents sent from the host.
 - [x] Add client-to-server communication (File content requests).
 - [ ] Add support for non-text file types (images, PDFs). Images could open in an modal overlay or html dialog element
