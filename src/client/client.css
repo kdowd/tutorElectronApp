@@ -1,8 +1,9 @@
 :root {
-  --background-main: #282b2e;
+  --background-main: #282c34;
   --background-minor: #a1a19a;
   --site-font-main-colour: whitesmoke;
   --flash-colour: #f27d00;
+  --file-viewing-colour: #8df20059;
 }
 
 body {
@@ -15,6 +16,12 @@ body {
 
   height: 100vh;
   overflow: hidden;
+}
+
+.display-container,
+#fileList {
+  scrollbar-width: thin;
+  scrollbar-color: #888 var(--background-main); /* thumb track */
 }
 
 #messageDisplay code.hljs {
@@ -49,13 +56,18 @@ body {
   background-color: rgba(255, 255, 255, 0.2);
   cursor: pointer;
 }
+#fileList li.active {
+  background-color: var(--file-viewing-colour);
+  color: white;
+  font-weight: bold;
+}
 
 h1 {
   font-size: 2.5rem;
   margin: 10px 0;
 }
 .display-container {
-  width: 95%;
+  width: 96%;
   min-height: 33vh;
   background-color: var(--background-main);
 
